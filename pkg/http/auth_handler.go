@@ -54,10 +54,6 @@ func (h *httpHandler) AuthLogin(c *gin.Context) {
 		return
 	}
 
-	// /* another way to set cookie */
-	// ssID := ss.ID()
-	// c.SetCookie(common.FLIQT_CONST, "session_"+ssID, 3600, "/", "localhost", false, true)
-
 	c.JSON(http.StatusOK, gin.H{
 		"data": usr,
 	})
@@ -80,16 +76,6 @@ func (h *httpHandler) AuthLogout(c *gin.Context) {
 		})
 		return
 	}
-
-	// /* another way to get & delete cookie */
-	// _, err := c.Cookie(common.FLIQT_CONST)
-	// if err != nil {
-	// 	c.JSON(http.StatusNotFound, gin.H{
-	// 		"err": err.Error(),
-	// 	})
-	// 	return
-	// }
-	// c.SetCookie(common.FLIQT_CONST, "", -1, "/", "localhost", false, true)
 
 	c.JSON(http.StatusOK, gin.H{
 		"msg": "logout success",

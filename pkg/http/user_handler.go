@@ -9,10 +9,6 @@ import (
 func (h *httpHandler) UserGet(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	// if usr, ok := c.Get("user"); ok {
-	// 	log.Info("[user] ========>", "usr", usr)
-	// }
-
 	userID := c.Param("userID")
 
 	usr, err := h.userSvc.FindByID(ctx, userID)
