@@ -14,6 +14,8 @@ import (
 	"time"
 
 	"github.com/charmbracelet/log"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/redis"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -46,6 +48,13 @@ func init() {
 func main() {
 	router := gin.Default()
 
+	store, err := redis.NewStore(10, "tcp", "localhost:6379", "", []byte("secret"))
+	if err != nil {
+		log.Error("[main] Init Redis failed ===>")
+		panic(err)
+	}
+	store.Options(sessions.Options{MaxAge: 3600})
+
 	readDB, writeDB, err := mysql.InitDatabases()
 	if err != nil {
 		log.Error("[main] Init DB failed ===>")
@@ -58,7 +67,7 @@ func main() {
 
 	authSvc := svc.NewAuthService(userRepo)
 
-	handler.NewHandler(router, userSvc, authSvc)
+	handler.NewHandler(router, store, userSvc, authSvc)
 
 	httpServer := &http.Server{
 		Addr:         fmt.Sprintf(":%s", viper.GetString("http.port")),

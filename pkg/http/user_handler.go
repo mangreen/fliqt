@@ -2,13 +2,16 @@ package http
 
 import (
 	"net/http"
-	// "fliqt/pkg/delivery/http/model"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (h *httpHandler) UserGet(c *gin.Context) {
 	ctx := c.Request.Context()
+
+	// if usr, ok := c.Get("user"); ok {
+	// 	log.Info("[user] ========>", "usr", usr)
+	// }
 
 	userID := c.Param("userID")
 
