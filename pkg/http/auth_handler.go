@@ -46,7 +46,7 @@ func (h *httpHandler) AuthLogin(c *gin.Context) {
 		MaxAge:   3600,
 		HttpOnly: true,
 	})
-	// sessions.Session.Save() is for setting cookie
+	// sessions.Session.Save() is for setting cookie and save into Redis
 	if err := ss.Save(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"err": err.Error(),
