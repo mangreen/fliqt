@@ -13,15 +13,29 @@ Write Go GIN RESTful API Service include below Condition (Push to Github)
 ・Run all service using docker-compose
 
 ## Run
-```
+```shell
+# run depend services
+docker-compose up -d
+
+# run server
 go run cmd/main.go
 ```
 Web Server will run on http://localhost:8080
 
 ## Test
-```go
+```shell
+# all
 go test -v ./...
-```
-```go
+
+# single
 go test -v ./{file}
+```
+
+## Docker
+```shell
+# build
+docker build -t fliqt .
+
+# run
+docker run --rm -p 8080:8080 --name fliqt fliqt
 ```
