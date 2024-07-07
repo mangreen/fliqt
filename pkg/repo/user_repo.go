@@ -11,7 +11,9 @@ import (
 type (
 	UserRepository interface {
 		FindByID(ctx context.Context, userID string) (*model.User, error)
-		FindByName(ctx context.Context, userName string) (*model.User, error)
+		Create(ctx context.Context, usr *model.User) error
+		DeleteByID(ctx context.Context, userID string) error
+		Update(ctx context.Context, userID string, user *model.User) error
 	}
 
 	userRepo struct {
@@ -29,8 +31,8 @@ func NewUserRepository(readDB *gorm.DB, writeDB *gorm.DB) UserRepository {
 
 func (repo *userRepo) FindByID(ctx context.Context, userID string) (*model.User, error) {
 
-	user := &model.User{}
-	err := repo.readDB.Where("id = ?", userID).First(user).Error
+	usr := &model.User{}
+	err := repo.readDB.Where("id = ?", userID).First(usr).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, err
@@ -39,20 +41,39 @@ func (repo *userRepo) FindByID(ctx context.Context, userID string) (*model.User,
 		log.Errorf("[repo] get user ID %v failed: %v", userID, err)
 		return nil, err
 	}
-	return user, nil
+	return usr, nil
 }
 
-func (repo *userRepo) FindByName(ctx context.Context, userName string) (*model.User, error) {
+func (repo *userRepo) Create(ctx context.Context, usr *model.User) error {
 
-	user := &model.User{}
-	err := repo.readDB.Where("name = ?", userName).First(user).Error
+	err := repo.readDB.Create(usr).Error
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, err
-		}
-
-		log.Errorf("[repo] get user by name %v failed: %v", userName, err)
-		return nil, err
+		log.Errorf("[repo] create user:%v failed: %v", usr, err)
+		return err
 	}
-	return user, nil
+	return nil
+}
+
+func (repo *userRepo) DeleteByID(ctx context.Context, userID string) error {
+
+	err := repo.readDB.Delete(&model.User{
+		ID: userID,
+	}).Error
+	if err != nil {
+		log.Errorf("[repo] delete user ID %v failed: %v", userID, err)
+		return err
+	}
+	return nil
+}
+
+func (repo *userRepo) Update(ctx context.Context, userID string, userUpdate *model.User) error {
+
+	err := repo.readDB.Model(&model.User{
+		ID: userID,
+	}).Updates(userUpdate).Error
+	if err != nil {
+		log.Errorf("[repo] update user:%v failed: %v", userUpdate, err)
+		return err
+	}
+	return nil
 }

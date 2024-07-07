@@ -32,6 +32,9 @@ func NewHandler(r *gin.Engine, store redis.Store, userSvc svc.UserService, authS
 	userApi := api.Group("/users")
 	userApi.Use(middle.AuthMiddleware())
 	userApi.GET("/:userID", handler.UserGet)
+	userApi.POST("/", handler.UserCreate)
+	userApi.DELETE("/:userID", handler.UserDelete)
+	userApi.PATCH("/:userID", handler.UserUpdate)
 
 	authApi := api.Group("/auth")
 	authApi.POST("/login", handler.AuthLogin)

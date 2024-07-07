@@ -94,12 +94,14 @@ func migration(conn *gorm.DB) error {
 	if conn.Migrator().HasTable(&model.User{}) {
 		if err := conn.First(&model.User{}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
 			admin := model.User{
-				Name:     "admin",
-				Password: "admin123",
+				ID:         "admin",
+				Name:       "Admin",
+				Password:   "admin123",
+				Role:       "admin",
+				Department: "admin",
 			}
 
-			tx := conn.Create(&admin)
-			if tx.Error != nil {
+			if err := conn.Create(&admin).Error; err != nil {
 				log.Errorf("[mysql] create admin failed: %v", err)
 				return err
 			}

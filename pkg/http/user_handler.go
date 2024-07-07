@@ -1,6 +1,8 @@
 package http
 
 import (
+	"fliqt/pkg/http/api"
+	"fliqt/pkg/model"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,6 +19,85 @@ func (h *httpHandler) UserGet(c *gin.Context) {
 			"err": err.Error(),
 		})
 
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": usr,
+	})
+}
+
+func (h *httpHandler) UserCreate(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	var req api.UserCreateRequest
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err": err.Error(),
+		})
+		return
+	}
+
+	usr, err := h.userSvc.Create(ctx, &model.User{
+		ID:         req.ID,
+		Name:       req.Name,
+		Password:   req.Password,
+		Role:       req.Role,
+		Department: req.Department,
+	})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": usr,
+	})
+}
+
+func (h *httpHandler) UserDelete(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	userID := c.Param("userID")
+
+	err := h.userSvc.DeleteByID(ctx, userID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err": err.Error(),
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "success",
+	})
+}
+
+func (h *httpHandler) UserUpdate(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	userID := c.Param("userID")
+
+	var req model.User
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err": err.Error(),
+		})
+		return
+	}
+
+	usr, err := h.userSvc.Update(ctx, userID, &model.User{
+		Name:       req.Name,
+		Role:       req.Role,
+		Department: req.Department,
+	})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err": err.Error(),
+		})
 		return
 	}
 

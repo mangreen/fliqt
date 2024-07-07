@@ -11,7 +11,7 @@ import (
 
 type (
 	AuthService interface {
-		Validate(ctx context.Context, userName string, password string) (*model.User, error)
+		Validate(ctx context.Context, userID string, password string) (*model.User, error)
 	}
 
 	authSvc struct {
@@ -25,8 +25,8 @@ func NewAuthService(userRepo repo.UserRepository) AuthService {
 	}
 }
 
-func (svc *authSvc) Validate(ctx context.Context, userName string, password string) (*model.User, error) {
-	usr, err := svc.userRepo.FindByName(ctx, userName)
+func (svc *authSvc) Validate(ctx context.Context, userID string, password string) (*model.User, error) {
+	usr, err := svc.userRepo.FindByID(ctx, userID)
 	if err != nil {
 		return nil, err
 	}

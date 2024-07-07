@@ -5,17 +5,18 @@ import (
 	"time"
 
 	"github.com/charmbracelet/log"
-	gonanoid "github.com/matoous/go-nanoid/v2"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
 type User struct {
-	ID        string `gorm:"primary_key;" json:"id" example:"10"`
-	Name      string `gorm:"not null;unique" json:"name"`
-	Password  string `gorm:"not null;" json:"-"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID         string `gorm:"primary_key;size:64; " json:"id" example:"james_bond"`
+	Name       string `gorm:"not null;size:64;" json:"name" example:"James Bond"`
+	Password   string `gorm:"not null;size:100;" json:"-"`
+	Role       string `gorm:"not null;size:20;" json:"role" example:"employee"`
+	Department string `gorm:"not null;size:20;" json:"department" example:"AI"`
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 // For gorm
@@ -23,30 +24,33 @@ func (*User) TableName() string {
 	return "users"
 }
 
-func (mdl *User) BeforeCreate(tx *gorm.DB) error {
-	uuid, err := gonanoid.Generate("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 6)
-	if err != nil {
-		log.Error("[model] gonanoid failed")
-		return err
+func (u *User) BeforeCreate(tx *gorm.DB) error {
+	if len(u.ID) == 0 {
+		log.Error("[model] user.ID is invalid")
+		return errors.New("[model] user.ID is invalid")
 	}
 
-	mdl.ID = "u" + time.Now().UTC().Format("20060102150405") + uuid
-
-	if len(mdl.Name) <= 2 {
-		return errors.New("[model] user.Name length is less than 2")
-	}
-
-	if len(mdl.Password) < 8 {
+	if len(u.Password) < 8 {
 		log.Error("[model] user.Password is invalid")
 		return errors.New("[model] user.Password is invalid")
 	}
 
-	hashpw, err := HashPassword(mdl.Password)
+	if len(u.Role) == 0 {
+		log.Error("[model] user.Role is invalid")
+		return errors.New("[model] user.Role is invalid")
+	}
+
+	if len(u.Department) == 0 {
+		log.Error("[model] user.Department is invalid")
+		return errors.New("[model] user.Department is invalid")
+	}
+
+	hashpw, err := HashPassword(u.Password)
 	if err != nil {
 		log.Error("[model] hash password failed")
 		return err
 	}
-	mdl.Password = hashpw
+	u.Password = hashpw
 
 	return nil
 }
@@ -59,4 +63,13 @@ func HashPassword(password string) (string, error) {
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
+}
+
+func (u *User) BeforeDelete(tx *gorm.DB) (err error) {
+	if u.ID == "admin" {
+		log.Error("[model] admin user not allowed to delete")
+		return errors.New("[model] admin not allowed to delete")
+	}
+
+	return
 }

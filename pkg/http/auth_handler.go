@@ -21,7 +21,7 @@ func (h *httpHandler) AuthLogin(c *gin.Context) {
 		return
 	}
 
-	usr, err := h.authSvc.Validate(ctx, req.Name, req.Password)
+	usr, err := h.authSvc.Validate(ctx, req.ID, req.Password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"err": err.Error(),

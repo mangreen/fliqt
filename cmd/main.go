@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fliqt/pkg/common"
 	"fliqt/pkg/common/mysql"
 	handler "fliqt/pkg/http"
 	"fliqt/pkg/repo"
@@ -48,7 +49,7 @@ func init() {
 func main() {
 	router := gin.Default()
 
-	store, err := redis.NewStore(10, "tcp", "localhost:6379", "", []byte("secret"))
+	store, err := redis.NewStore(10, "tcp", viper.GetString("redis.address"), viper.GetString("redis.password"), []byte(common.FLIQT_CONST))
 	if err != nil {
 		log.Error("[main] Init Redis failed ===>")
 		panic(err)
