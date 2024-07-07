@@ -10,13 +10,13 @@ import (
 )
 
 type User struct {
-	ID         string `gorm:"primary_key;size:64; " json:"id" example:"james_bond"`
-	Name       string `gorm:"not null;size:64;" json:"name" example:"James Bond"`
-	Password   string `gorm:"not null;size:100;" json:"-"`
-	Role       string `gorm:"not null;size:20;" json:"role" example:"employee"`
-	Department string `gorm:"not null;size:20;" json:"department" example:"AI"`
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	ID         string    `gorm:"primary_key;size:64; " json:"id" example:"james_bond"`
+	Name       string    `gorm:"not null;size:64;" json:"name" example:"James Bond"`
+	Password   string    `gorm:"not null;size:100;" json:"-"`
+	Role       string    `gorm:"not null;size:20;" json:"role" example:"employee"`
+	Department string    `gorm:"not null;size:20;" json:"department" example:"AI"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"upated_at"`
 }
 
 // For gorm

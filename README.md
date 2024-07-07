@@ -17,3 +17,11 @@ Write Go GIN RESTful API Service include below Condition (Push to Github)
 go run cmd/main.go
 ```
 Web Server will run on http://localhost:8080
+
+## Test
+```go
+go test -v ./...
+```
+```go
+go test -v ./{file}
+```

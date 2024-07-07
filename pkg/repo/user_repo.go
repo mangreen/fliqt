@@ -34,7 +34,7 @@ func NewUserRepository(readDB *gorm.DB, writeDB *gorm.DB) UserRepository {
 func (repo *userRepo) List(ctx context.Context, page int, size int) ([]model.User, error) {
 
 	users := []model.User{}
-	err := repo.readDB.Scopes(mysql.Paginate(page, size)).Find(&users).Error
+	err := repo.readDB.WithContext(ctx).Scopes(mysql.Paginate(page, size)).Find(&users).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, err
@@ -49,7 +49,7 @@ func (repo *userRepo) List(ctx context.Context, page int, size int) ([]model.Use
 func (repo *userRepo) FindByID(ctx context.Context, userID string) (*model.User, error) {
 
 	user := &model.User{}
-	err := repo.readDB.Where("id = ?", userID).First(user).Error
+	err := repo.readDB.WithContext(ctx).Where("id = ?", userID).First(user).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, err
@@ -63,7 +63,7 @@ func (repo *userRepo) FindByID(ctx context.Context, userID string) (*model.User,
 
 func (repo *userRepo) Create(ctx context.Context, userRequest model.User) error {
 
-	err := repo.readDB.Create(&userRequest).Error
+	err := repo.writeDB.WithContext(ctx).Create(&userRequest).Error
 	if err != nil {
 		log.Errorf("[repo] create user:%v failed: %v", userRequest, err)
 		return err
@@ -73,7 +73,7 @@ func (repo *userRepo) Create(ctx context.Context, userRequest model.User) error 
 
 func (repo *userRepo) DeleteByID(ctx context.Context, userID string) error {
 
-	err := repo.readDB.Delete(&model.User{
+	err := repo.writeDB.WithContext(ctx).Delete(&model.User{
 		ID: userID,
 	}).Error
 	if err != nil {
@@ -85,7 +85,7 @@ func (repo *userRepo) DeleteByID(ctx context.Context, userID string) error {
 
 func (repo *userRepo) Update(ctx context.Context, userID string, userRequest model.User) error {
 
-	err := repo.readDB.Model(&model.User{
+	err := repo.writeDB.WithContext(ctx).Model(&model.User{
 		ID: userID,
 	}).Updates(&userRequest).Error
 	if err != nil {
