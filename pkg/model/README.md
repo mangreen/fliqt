@@ -1,6 +1,7 @@
 
 ## Some Design
-- Department
+- Role (option)
+- Department (option)
 - Payroll
 - Leave
 - Attendance

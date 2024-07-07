@@ -4,16 +4,18 @@ import (
 	"fliqt/pkg/http/api"
 	"fliqt/pkg/model"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-func (h *httpHandler) UserGet(c *gin.Context) {
+func (h *httpHandler) UserList(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	userID := c.Param("userID")
+	page, _ := strconv.Atoi(c.Param("page"))
+	size, _ := strconv.Atoi(c.Param("size"))
 
-	usr, err := h.userSvc.FindByID(ctx, userID)
+	users, err := h.userSvc.List(ctx, page, size)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"err": err.Error(),
@@ -23,7 +25,26 @@ func (h *httpHandler) UserGet(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"data": usr,
+		"data": users,
+	})
+}
+
+func (h *httpHandler) UserGet(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	userID := c.Param("userID")
+
+	user, err := h.userSvc.FindByID(ctx, userID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err": err.Error(),
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": user,
 	})
 }
 
@@ -38,7 +59,7 @@ func (h *httpHandler) UserCreate(c *gin.Context) {
 		return
 	}
 
-	usr, err := h.userSvc.Create(ctx, &model.User{
+	user, err := h.userSvc.Create(ctx, model.User{
 		ID:         req.ID,
 		Name:       req.Name,
 		Password:   req.Password,
@@ -53,7 +74,7 @@ func (h *httpHandler) UserCreate(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"data": usr,
+		"data": user,
 	})
 }
 
@@ -89,7 +110,7 @@ func (h *httpHandler) UserUpdate(c *gin.Context) {
 		return
 	}
 
-	usr, err := h.userSvc.Update(ctx, userID, &model.User{
+	user, err := h.userSvc.Update(ctx, userID, model.User{
 		Name:       req.Name,
 		Role:       req.Role,
 		Department: req.Department,
@@ -102,6 +123,6 @@ func (h *httpHandler) UserUpdate(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"data": usr,
+		"data": user,
 	})
 }
