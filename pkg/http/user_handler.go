@@ -65,6 +65,7 @@ func (h *httpHandler) UserCreate(c *gin.Context) {
 		Password:   req.Password,
 		Role:       req.Role,
 		Department: req.Department,
+		ManagerID:  req.ManagerID,
 	})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -102,7 +103,7 @@ func (h *httpHandler) UserUpdate(c *gin.Context) {
 
 	userID := c.Param("userID")
 
-	var req model.User
+	var req api.UserUpdateRequest
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"err": err.Error(),
@@ -114,6 +115,7 @@ func (h *httpHandler) UserUpdate(c *gin.Context) {
 		Name:       req.Name,
 		Role:       req.Role,
 		Department: req.Department,
+		ManagerID:  req.ManagerID,
 	})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

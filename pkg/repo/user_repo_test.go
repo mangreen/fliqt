@@ -101,11 +101,12 @@ func TestUserCreate(t *testing.T) {
 		Password:   "pw123456",
 		Role:       "employee",
 		Department: "AI",
+		ManagerID:  "andy_lee",
 	}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(regexp.QuoteMeta("INSERT INTO `users`")).
-		WithArgs(mockUser.ID, mockUser.Name, sqlmock.AnyArg(), mockUser.Role, mockUser.Department, sqlmock.AnyArg(), sqlmock.AnyArg()).
+		WithArgs(mockUser.ID, mockUser.Name, sqlmock.AnyArg(), mockUser.Role, mockUser.Department, mockUser.ManagerID, sqlmock.AnyArg(), sqlmock.AnyArg()).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
@@ -129,11 +130,12 @@ func TestUserUpdate(t *testing.T) {
 		Name:       "Kevin Chen",
 		Role:       "employee",
 		Department: "AI",
+		ManagerID:  "andy_lee",
 	}
 
 	mock.ExpectBegin()
-	mock.ExpectExec(regexp.QuoteMeta("UPDATE `users` SET `name`=?,`role`=?,`department`=?,`updated_at`=? WHERE `id` = ?")).
-		WithArgs(mockUser.Name, mockUser.Role, mockUser.Department, sqlmock.AnyArg(), mockUserID).
+	mock.ExpectExec(regexp.QuoteMeta("UPDATE `users` SET `name`=?,`role`=?,`department`=?,`manager_id`=?,`updated_at`=? WHERE `id` = ?")).
+		WithArgs(mockUser.Name, mockUser.Role, mockUser.Department, mockUser.ManagerID, sqlmock.AnyArg(), mockUserID).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectCommit()
 
