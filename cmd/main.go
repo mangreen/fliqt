@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fliqt/pkg/common"
-	"fliqt/pkg/common/mysql"
+	"fliqt/pkg/common/db"
 	handler "fliqt/pkg/http"
 	"fliqt/pkg/repo"
 	"fliqt/pkg/svc"
@@ -56,7 +56,7 @@ func main() {
 	}
 	store.Options(sessions.Options{MaxAge: 3600})
 
-	readDB, writeDB, err := mysql.InitDatabases()
+	readDB, writeDB, err := db.InitDatabases()
 	if err != nil {
 		log.Error("[main] Init DB failed ===>")
 		panic(err)

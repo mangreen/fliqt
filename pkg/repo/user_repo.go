@@ -2,7 +2,7 @@ package repo
 
 import (
 	"context"
-	"fliqt/pkg/common/mysql"
+	"fliqt/pkg/common/db"
 	"fliqt/pkg/model"
 
 	"github.com/charmbracelet/log"
@@ -34,7 +34,7 @@ func NewUserRepository(readDB *gorm.DB, writeDB *gorm.DB) UserRepository {
 func (repo *userRepo) List(ctx context.Context, page int, size int) ([]model.User, error) {
 
 	users := []model.User{}
-	err := repo.readDB.WithContext(ctx).Scopes(mysql.Paginate(page, size)).Find(&users).Error
+	err := repo.readDB.WithContext(ctx).Scopes(db.Paginate(page, size)).Find(&users).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, err
