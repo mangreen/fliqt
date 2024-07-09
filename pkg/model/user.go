@@ -15,7 +15,7 @@ type User struct {
 	Password   string    `gorm:"not null;size:100;" json:"-"`
 	Role       string    `gorm:"not null;size:20;" json:"role" example:"employee"`
 	Department string    `gorm:"not null;size:20;" json:"department" example:"AI"`
-	ManagerID  string    `gorm:"size:64; " json:"-" example:"miss_m"`
+	ManagerID  *string   `gorm:"size:64; " json:"-" example:"miss_m"`
 	Manager    *User     `gorm:"references:ID" json:"manager"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"upated_at"`

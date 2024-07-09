@@ -95,13 +95,14 @@ func TestUserCreate(t *testing.T) {
 	sqlDB, gormDB, mock := initMockDB(t)
 	defer sqlDB.Close()
 
+	managerID := "andy_lee"
 	mockUser := model.User{
 		ID:         "kevin_chen",
 		Name:       "Kevin Chen",
 		Password:   "pw123456",
 		Role:       "employee",
 		Department: "AI",
-		ManagerID:  "andy_lee",
+		ManagerID:  &managerID,
 	}
 
 	mock.ExpectBegin()
@@ -126,11 +127,12 @@ func TestUserUpdate(t *testing.T) {
 	defer sqlDB.Close()
 
 	mockUserID := "kevin_chen"
+	managerID := "andy_lee"
 	mockUser := model.User{
 		Name:       "Kevin Chen",
 		Role:       "employee",
 		Department: "AI",
-		ManagerID:  "andy_lee",
+		ManagerID:  &managerID,
 	}
 
 	mock.ExpectBegin()
